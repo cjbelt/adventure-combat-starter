@@ -21,6 +21,7 @@ function printHelp() {
   console.log("  Type 'take <item>' to take an item");
   console.log("  Type 'drop <item>' to drop an item");
   console.log("  Type 'eat <item>' to eat a food item");
+  console.log("  Type 'equip <item>' to equip a item");
   console.log("  Type 'n', 's', 'e', 'w' to move");
   console.log("");
 }
@@ -35,7 +36,7 @@ function startGame() {
 
     // Create the world and player
     World.loadWorld(worldData, player);
-    player = new Player(name, World.rooms[1]);
+    player = new Player(name, World.rooms[1], 50);
     World.setPlayer(player);
 
     // Show commands
@@ -45,6 +46,7 @@ function startGame() {
 
       console.clear();
       player.currentRoom.printRoom();
+      World.startGame();
 
       processCommand();
     });
@@ -65,8 +67,7 @@ function processCommand() {
       process.exit();
 
     } else if (cmd === 'l') {
-      player.currentRoom.printRoom();
-
+      player.currentRoom.findHideout();
     } else if (cmd === 'i') {
       player.printInventory();
 
@@ -75,25 +76,39 @@ function processCommand() {
       player.move(direction);
 
     } else if (cmd.startsWith("take ")) {
-      let itemName = cmd.split(" ")[1];
+      let itemName = cmd.split(" ").slice(1).join(" ");
 
       player.takeItem(itemName);
 
     } else if (cmd.startsWith("drop ")) {
-      let itemName = cmd.split(" ")[1];
+      let itemName = cmd.split(" ").slice(1).join(" ");
 
       player.dropItem(itemName);
 
     } else if (cmd.startsWith("eat ")) {
-      let itemName = cmd.split(" ")[1];
+      let itemName = cmd.split(" ").slice(1).join(" ");
 
       player.eatItem(itemName);
 
+    } else if (cmd.startsWith("equip ")) {
+      let itemName = cmd.split(" ").slice(1).join(" ");
+
+      player.equipItem(itemName);
+
     } else if (cmd.startsWith("hit ")) {
-      let enemyName = cmd.split(" ")[1];
+      let enemyName = cmd.split(" ").slice(1).join(" ");
 
       player.hit(enemyName);
 
+    } else if (cmd.startsWith("talk ")) {
+      let shopName = cmd.split(" ").slice(1).join(" ");
+
+      player.talk(shopName);
+    } else if (cmd.startsWith("buy ") && player.talking) {
+        let itemName = cmd.split(" ").slice(1).join(" ");
+        let shopName = player.talking.name;
+
+        player.buy(shopName, itemName);
     } else {
       console.log("Invalid command. Type 'h' for help.");
     }

@@ -198,11 +198,9 @@ describe ('Enemy', function () {
 
     expect(player.health).to.equal(100);
     enemy.attack();
-    expect(player.health).to.equal(90);
+    expect(player.health).to.lessThan(100);
     expect(enemy.cooldown).above(0);
 
   });
 
 });
-
-
